@@ -1,3 +1,4 @@
+import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import {
     createTrackMutedEvent,
     sendAnalytics
@@ -397,8 +398,10 @@ export function trackAdded(track) {
 
                     noDataFromSourceNotificationInfo = { timeout };
                 }
-
             }
+
+            track.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED,
+                () => VideoLayout._updateLargeVideoIfDisplayed(participantId));
         } else {
             participantId = track.getParticipantId();
             isReceivingData = true;

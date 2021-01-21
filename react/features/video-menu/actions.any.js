@@ -9,7 +9,6 @@ import {
     sendAnalytics,
     VIDEO_MUTE
 } from '../analytics';
-import { hideDialog } from '../base/dialog';
 import {
     MEDIA_TYPE,
     setAudioMuted,
@@ -21,18 +20,8 @@ import {
     muteRemoteParticipant
 } from '../base/participants';
 
-import { RemoteVideoMenu } from './components';
-
 declare var APP: Object;
 
-/**
- * Hides the remote video menu.
- *
- * @returns {Function}
- */
-export function hideRemoteVideoMenu() {
-    return hideDialog(RemoteVideoMenu);
-}
 
 /**
  * Mutes the local participant.
