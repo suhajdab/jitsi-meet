@@ -83,6 +83,13 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     accessibilityLabel: string;
 
     /**
+     * An additional css class passed to the component.
+     *
+     * @abstract
+     */
+    additionalClassName: string;
+
+    /**
      * The icon of this button.
      *
      * @abstract
@@ -138,6 +145,16 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      */
     _handleClick() {
         // To be implemented by subclass.
+    }
+
+    /**
+     * Gets the additional CSS class name.
+     *
+     * @protected
+     * @returns {string}
+     */
+    _getAdditionalClassName() {
+        return this.additionalClassName;
     }
 
     /**
@@ -266,6 +283,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
         const props = {
             ...this.props,
             accessibilityLabel: this.accessibilityLabel,
+            additionalClassName: this._getAdditionalClassName(),
             disabled: this._isDisabled(),
             elementAfter: this._getElementAfter(),
             icon: this._getIcon(),

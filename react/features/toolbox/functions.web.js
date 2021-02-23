@@ -5,6 +5,32 @@ import { hasAvailableDevices } from '../base/devices';
 declare var interfaceConfig: Object;
 
 /**
+ * Returns a set of button names to be displayed in the toolbox, based on the screen width.
+ *
+ * @param {number} width - The width of the screen.
+ * @returns {Set} The button set.
+ */
+export function getToolbarAdditionalButtons(width: number): Set<string> {
+    if (width <= 500) {
+        if (width <= 390) {
+            if (width <= 332) {
+                if (width <= 224) {
+                    return new Set();
+                }
+
+                return new Set([ 'overflow' ]);
+            }
+
+            return new Set([ 'chat', 'tileview', 'overflow' ]);
+        }
+
+        return new Set([ 'chat', 'raisehand', 'tileview', 'overflow' ]);
+    }
+
+    return new Set([ 'desktop', 'chat', 'raisehand', 'tileview', 'invite', 'overflow' ]);
+}
+
+/**
  * Helper for getting the height of the toolbox.
  *
  * @returns {number} The height of the toolbox.
