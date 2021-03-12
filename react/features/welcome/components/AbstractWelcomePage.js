@@ -1,20 +1,19 @@
 // @flow
 
-import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
-import { Component } from 'react';
-import type { Dispatch } from 'redux';
+import { generateRoomWithoutSeparator } from "@jitsi/js-utils/random";
+import { Component } from "react";
+import type { Dispatch } from "redux";
 
-import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
-import { appNavigate } from '../../app/actions';
-import isInsecureRoomName from '../../base/util/isInsecureRoomName';
-import { isCalendarEnabled } from '../../calendar-sync';
-import { isRecentListEnabled } from '../../recent-list/functions';
+import { createWelcomePageEvent, sendAnalytics } from "../../analytics";
+import { appNavigate } from "../../app/actions";
+import isInsecureRoomName from "../../base/util/isInsecureRoomName";
+import { isCalendarEnabled } from "../../calendar-sync";
+import { isRecentListEnabled } from "../../recent-list/functions";
 
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
  */
 type Props = {
-
     /**
      * Whether the calendar functionality is enabled or not.
      */
@@ -48,7 +47,7 @@ type Props = {
     /**
      * The Redux dispatch Function.
      */
-    dispatch: Dispatch<any>
+    dispatch: Dispatch<any>,
 };
 
 /**
@@ -66,7 +65,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      */
     static getDerivedStateFromProps(props: Props, state: Object) {
         return {
-            room: props._room || state.room
+            room: props._room || state.room,
         };
     }
 
@@ -74,23 +73,15 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * Save room name into component's local state.
      *
      * @type {Object}
-     * @property {number|null} animateTimeoutId - Identifier of the letter
-     * animation timeout.
-     * @property {string} generatedRoomname - Automatically generated room name.
      * @property {string} room - Room name.
      * @property {string} roomPlaceholder - Room placeholder that's used as a
      * placeholder for input.
-     * @property {nubmer|null} updateTimeoutId - Identifier of the timeout
-     * updating the generated room name.
      */
     state = {
-        animateTimeoutId: undefined,
-        generatedRoomname: '',
         insecureRoomName: false,
         joining: false,
-        room: '',
-        roomPlaceholder: '',
-        updateTimeoutId: undefined
+        room: "",
+        roomPlaceholder: "",
     };
 
     /**
@@ -103,11 +94,11 @@ export class AbstractWelcomePage extends Component<Props, *> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._animateRoomnameChanging
-            = this._animateRoomnameChanging.bind(this);
         this._onJoin = this._onJoin.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
-        this._renderInsecureRoomNameWarning = this._renderInsecureRoomNameWarning.bind(this);
+        this._renderInsecureRoomNameWarning = this._renderInsecureRoomNameWarning.bind(
+            this
+        );
         this._updateRoomname = this._updateRoomname.bind(this);
     }
 
@@ -119,7 +110,9 @@ export class AbstractWelcomePage extends Component<Props, *> {
      */
     componentDidMount() {
         this._mounted = true;
-        sendAnalytics(createWelcomePageEvent('viewed', undefined, { value: 1 }));
+        sendAnalytics(
+            createWelcomePageEvent("viewed", undefined, { value: 1 })
+        );
     }
 
     /**
@@ -129,48 +122,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @inheritdoc
      */
     componentWillUnmount() {
-        this._clearTimeouts();
         this._mounted = false;
-    }
-
-    _animateRoomnameChanging: (string) => void;
-
-    /**
-     * Animates the changing of the room name.
-     *
-     * @param {string} word - The part of room name that should be added to
-     * placeholder.
-     * @private
-     * @returns {void}
-     */
-    _animateRoomnameChanging(word: string) {
-        let animateTimeoutId;
-        const roomPlaceholder = this.state.roomPlaceholder + word.substr(0, 1);
-
-        if (word.length > 1) {
-            animateTimeoutId
-                = setTimeout(
-                    () => {
-                        this._animateRoomnameChanging(
-                            word.substring(1, word.length));
-                    },
-                    70);
-        }
-        this.setState({
-            animateTimeoutId,
-            roomPlaceholder
-        });
-    }
-
-    /**
-     * Method that clears timeouts for animations and updates of room name.
-     *
-     * @private
-     * @returns {void}
-     */
-    _clearTimeouts() {
-        clearTimeout(this.state.animateTimeoutId);
-        clearTimeout(this.state.updateTimeoutId);
     }
 
     /**
@@ -193,20 +145,22 @@ export class AbstractWelcomePage extends Component<Props, *> {
         const room = this.state.room || this.state.generatedRoomname;
 
         sendAnalytics(
-            createWelcomePageEvent('clicked', 'joinButton', {
+            createWelcomePageEvent("clicked", "joinButton", {
                 isGenerated: !this.state.room,
-                room
-            }));
+                room,
+            })
+        );
 
         if (room) {
             this.setState({ joining: true });
 
             // By the time the Promise of appNavigate settles, this component
             // may have already been unmounted.
-            const onAppNavigateSettled
-                = () => this._mounted && this.setState({ joining: false });
+            const onAppNavigateSettled = () =>
+                this._mounted && this.setState({ joining: false });
 
-            this.props.dispatch(appNavigate(room))
+            this.props
+                .dispatch(appNavigate(room))
                 .then(onAppNavigateSettled, onAppNavigateSettled);
         }
     }
@@ -224,11 +178,14 @@ export class AbstractWelcomePage extends Component<Props, *> {
     _onRoomChange(value: string) {
         this.setState({
             room: value,
-            insecureRoomName: this.props._enableInsecureRoomNameWarning && value && isInsecureRoomName(value)
+            insecureRoomName:
+                this.props._enableInsecureRoomNameWarning &&
+                value &&
+                isInsecureRoomName(value),
         });
     }
 
-    _renderInsecureRoomNameWarning: () => React$Component<any>;;
+    _renderInsecureRoomNameWarning: () => React$Component<any>;
 
     /**
      * Renders the insecure room name warning if needed.
@@ -236,7 +193,10 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @returns {ReactElement}
      */
     _renderInsecureRoomNameWarning() {
-        if (this.props._enableInsecureRoomNameWarning && this.state.insecureRoomName) {
+        if (
+            this.props._enableInsecureRoomNameWarning &&
+            this.state.insecureRoomName
+        ) {
             return this._doRenderInsecureRoomNameWarning();
         }
 
@@ -253,18 +213,11 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @returns {void}
      */
     _updateRoomname() {
-        const generatedRoomname = generateRoomWithoutSeparator();
-        const roomPlaceholder = '';
-        const updateTimeoutId = setTimeout(this._updateRoomname, 10000);
+        const roomPlaceholder = generateRoomWithoutSeparator();
 
-        this._clearTimeouts();
-        this.setState(
-            {
-                generatedRoomname,
-                roomPlaceholder,
-                updateTimeoutId
-            },
-            () => this._animateRoomnameChanging(generatedRoomname));
+        this.setState({
+            roomPlaceholder,
+        });
     }
 }
 
@@ -279,10 +232,13 @@ export class AbstractWelcomePage extends Component<Props, *> {
 export function _mapStateToProps(state: Object) {
     return {
         _calendarEnabled: isCalendarEnabled(state),
-        _enableInsecureRoomNameWarning: state['features/base/config'].enableInsecureRoomNameWarning || false,
-        _moderatedRoomServiceUrl: state['features/base/config'].moderatedRoomServiceUrl,
+        _enableInsecureRoomNameWarning:
+            state["features/base/config"].enableInsecureRoomNameWarning ||
+            false,
+        _moderatedRoomServiceUrl:
+            state["features/base/config"].moderatedRoomServiceUrl,
         _recentListEnabled: isRecentListEnabled(),
-        _room: state['features/base/conference'].room,
-        _settings: state['features/base/settings']
+        _room: state["features/base/conference"].room,
+        _settings: state["features/base/settings"],
     };
 }
